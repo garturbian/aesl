@@ -16,15 +16,31 @@ document.addEventListener('DOMContentLoaded', () => {
         reviewContainer.innerHTML = `
             <h2>${word.lemma}</h2>
             <p>${word.definition}</p>
+            <div id="morphology-container"></div>
             <div id="examples-container"></div>
             <button id="correct-btn">I knew it</button>
             <button id="incorrect-btn">I didn't know</button>
         `;
 
+        if (word.morphology) {
+            displayMorphology(JSON.parse(word.morphology));
+        }
+
         if (word.word_id > 0) {
+            fetchAndDisplayExamples(word.word_id);
             document.getElementById('correct-btn').addEventListener('click', () => handleAnswer(word.word_id, true));
             document.getElementById('incorrect-btn').addEventListener('click', () => handleAnswer(word.word_id, false));
         }
+    }
+
+    function displayMorphology(morphologyData) {
+        const morphologyContainer = document.getElementById('morphology-container');
+        let morphologyHtml = '<h3>Morphology:</h3><ul>';
+        for (const type in morphologyData) {
+            morphologyHtml += `<li><strong>${type}:</strong> ${morphologyData[type] || 'N/A'}</li>`;
+        }
+        morphologyHtml += '</ul>';
+        morphologyContainer.innerHTML = morphologyHtml;
     }
 
     function fetchAndDisplayExamples(wordId) {
